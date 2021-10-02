@@ -1,0 +1,101 @@
+---
+title: "Lab 3"
+author: "David Ziemann"
+date: "10/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*Question 1
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+install.packages('readr')
+install.packages('readxl')
+dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
+ggplot(dat, aes(x = as.numeric(dat$`Highest year of school completed`))) + 
+  geom_histogram() + facet_wrap(~dat$`Marital status`)
+dat1 <- dat %>% 
+  group_by(`Marital status`) %>% 
+  filter(nchar(`Highest year of school completed`) < 3) %>%
+  summarize(
+    mean_year = mean(as.numeric(`Highest year of school completed`))
+  )
+table(dat1)
+```
+The table shows that respondents who declined to comment on their marital status had the highest mean number of years of education at approximately 15.5 years. People who were widowed had the lowest mean number of years of education at about 11.2 years. People who were never married had a higher mean than people who were married. 
+
+*Question 2
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+install.packages('readr')
+install.packages('readxl')
+dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
+dat2 <- dat %>% 
+  group_by(`Marital status`) %>% 
+  filter(nchar(`Highest year of school completed`) < 3) %>%
+  summarize(
+    mean_year = mean(as.numeric(`Highest year of school completed`))
+  )
+Q2 <- merge(dat, dat2, by = "Marital status") %>%
+  filter(as.numeric(`Highest year of school completed`) > mean_year) %>%
+  select(`Highest year of school completed`, mean_year)
+str(Q2)
+```
+
+*Question 3
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+install.packages('readr')
+install.packages('readxl')
+dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
+dat$happy <- case_when(
+  dat$`General happiness` %in% c('Very happy', 'Pretty happy') ~ 'Happy',
+  dat$ `General happiness` == 'Not too happy' ~ 'Not Happy',
+  TRUE ~ 'Unknown'
+)
+  ggplot(dat, aes(x = happy, fill=dat$`Marital status`)) + 
+  geom_bar()
+  table(dat$happy, dat$`Marital status`)
+```
+The graph shows that a vast majority of respondents reported they were happy per the criteria of being happy. Married people made up much of the happy and the unknown responses. The distribution of marital status remained roughly similar throughout the levels of happiness. 
+
+*Question 4
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+install.packages('readr')
+install.packages('readxl')
+dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
+ggplot(dat, aes(x = happy, fill=dat$`Marital status`)) + 
+  geom_bar() + facet_wrap(~dat$`Political party affiliation`) +
+  theme(axis.text.x=element_text(angle=-90))
+table(dat$happy, dat$`Marital status`, dat$`Political party affiliation`)
+```
+Party affiliation does not affect the relationship between happiness and marital status very much. The only deviation from the relationship described in the previous question was respondents who identified as Strong Republican reported Unknown more often that Not Happy.
+
+*Question 5
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+install.packages('readr')
+install.packages('readxl')
+dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
+ggplot(dat, aes(x = happy, fill=dat$`Marital status`)) + 
+  geom_bar() + facet_wrap(~dat$`Respondents sex`) +
+  theme(axis.text.x=element_text(angle=-90))
+table(dat$happy, dat$`Marital status`, dat$`Respondents sex`)
+```
+The sex of the respondents did seem to have an effect on their happiness. Women made up more of the responses, and were more likely to be happy. Much of the proportions in marital status remained the same as in previous questions. Women who were widowed and women who were divorced reported higher levels of happiness then men who were widowed or divorced. 
+
+
