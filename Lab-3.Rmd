@@ -14,11 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(tidyverse)
 library(readxl)
-install.packages('readr')
-install.packages('readxl')
 dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
-ggplot(dat, aes(x = as.numeric(dat$`Highest year of school completed`))) + 
-  geom_histogram() + facet_wrap(~dat$`Marital status`)
+ggplot(dat, aes(x = as.numeric(`Highest year of school completed`))) + 
+  geom_histogram() + facet_wrap(~`Marital status`)
 dat1 <- dat %>% 
   group_by(`Marital status`) %>% 
   filter(nchar(`Highest year of school completed`) < 3) %>%
@@ -34,8 +32,6 @@ The table shows that respondents who declined to comment on their marital status
 library(ggplot2)
 library(tidyverse)
 library(readxl)
-install.packages('readr')
-install.packages('readxl')
 dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
 dat2 <- dat %>% 
   group_by(`Marital status`) %>% 
@@ -46,7 +42,7 @@ dat2 <- dat %>%
 Q2 <- merge(dat, dat2, by = "Marital status") %>%
   filter(as.numeric(`Highest year of school completed`) > mean_year) %>%
   select(`Highest year of school completed`, mean_year)
-str(Q2)
+table(Q2)
 ```
 
 *Question 3
@@ -54,15 +50,13 @@ str(Q2)
 library(ggplot2)
 library(tidyverse)
 library(readxl)
-install.packages('readr')
-install.packages('readxl')
 dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
 dat$happy <- case_when(
   dat$`General happiness` %in% c('Very happy', 'Pretty happy') ~ 'Happy',
   dat$ `General happiness` == 'Not too happy' ~ 'Not Happy',
   TRUE ~ 'Unknown'
 )
-  ggplot(dat, aes(x = happy, fill=dat$`Marital status`)) + 
+  ggplot(dat, aes(x = happy, fill=`Marital status`)) + 
   geom_bar()
   table(dat$happy, dat$`Marital status`)
 ```
@@ -73,10 +67,13 @@ The graph shows that a vast majority of respondents reported they were happy per
 library(ggplot2)
 library(tidyverse)
 library(readxl)
-install.packages('readr')
-install.packages('readxl')
 dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
-ggplot(dat, aes(x = happy, fill=dat$`Marital status`)) + 
+dat$happy <- case_when(
+  dat$`General happiness` %in% c('Very happy', 'Pretty happy') ~ 'Happy',
+  dat$ `General happiness` == 'Not too happy' ~ 'Not Happy',
+  TRUE ~ 'Unknown'
+)
+ggplot(dat, aes(x = happy, fill=`Marital status`)) + 
   geom_bar() + facet_wrap(~dat$`Political party affiliation`) +
   theme(axis.text.x=element_text(angle=-90))
 table(dat$happy, dat$`Marital status`, dat$`Political party affiliation`)
@@ -88,10 +85,13 @@ Party affiliation does not affect the relationship between happiness and marital
 library(ggplot2)
 library(tidyverse)
 library(readxl)
-install.packages('readr')
-install.packages('readxl')
 dat <- readxl::read_xls('C:\\Users\\ziema\\OneDrive\\Documents\\DS_202\\GSS.xls')
-ggplot(dat, aes(x = happy, fill=dat$`Marital status`)) + 
+dat$happy <- case_when(
+  dat$`General happiness` %in% c('Very happy', 'Pretty happy') ~ 'Happy',
+  dat$ `General happiness` == 'Not too happy' ~ 'Not Happy',
+  TRUE ~ 'Unknown'
+)
+ggplot(dat, aes(x = happy, fill=`Marital status`)) + 
   geom_bar() + facet_wrap(~dat$`Respondents sex`) +
   theme(axis.text.x=element_text(angle=-90))
 table(dat$happy, dat$`Marital status`, dat$`Respondents sex`)
