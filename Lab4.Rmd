@@ -1,0 +1,114 @@
+---
+title: "Lab4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+defense <- read_excel('cyclonesFootball2020.xlsx', sheet='Defensive')
+offense <- read_excel('cyclonesFootball2020.xlsx', sheet='Offensive')
+biography <- read_excel('cyclonesFootball2020.xlsx', sheet='Biography')
+
+#Part 1
+#Question 1
+
+offense %>% 
+  factor("Name", "Opponent_Opponent")
+defense %>% 
+  factor("Name", "Opponent_Opponent")
+biography %>% 
+  factor("Name")
+#Question 2
+
+offense1 <- offense %>%
+  mutate(
+    across(everything(), ~replace_na(0)))
+
+defense1 <- defense %>% 
+  mutate(
+    across(everything(), ~replace_na(0)))
+
+biography <- biography %>% 
+  mutate(
+    across(everything(), ~replace_na(0)))
+
+#Question 3
+
+biography$Height <- as.numeric(biography$Height)
+biography$Weight <- as.numeric(biography$Weight)
+
+
+#Question 4
+
+defense1 %>% 
+ group_by(Name, Opponent_Opponent) %>% 
+  mutate(Game = row_number())
+offense1 %>% 
+  group_by(Name, Opponent_Opponent) %>% 
+  mutate(Game = row_number())
+
+defClean <- defense1
+offClean <- offense1
+bioClean <- biography
+
+#Part 2
+
+#Question 1
+
+offClean <- pivot_longer(offClean, Receiving_REC:Passing_INT, 
+             names_to = 'stat', values_to = 'score')
+#Question 2
+
+statistics <- offClean %>% 
+  group_by(Name) %>% 
+  summarize(
+    Sum = n(),
+    once = (Sum==1)) %>% 
+  select(-once)
+statistics
+#Question 3
+
+ggplot(offClean, aes(x= Name, y= score)) +
+  geom_bar(stat='identity') +
+  facet_wrap(~stat) + coord_flip()
+#Question 4
+
+off1 <- offClean %>% 
+  filter(Opponent_Opponent == 'Oklahoma')
+
+#Biography
+
+#Question 5
+
+str(bioClean)
+biography1 <- bioClean %>% 
+  separate(Hometown, c('City', 'State'), sep=',')
+head(biography1$City)
+head(biography1$State)
+
+#Question 6
+
+biography2 <- biography1 %>% group_by('State')
+table(biography2$Name, biography2$State)
+
+#Question 7
+
+defPurdy <- defClean %>% 
+  filter(Name == 'Purdy, Brock')
+offPurdy <- offClean %>% 
+  filter(Name == 'Purdy, Brock')
+defPurdy
+defClean
+offPurdy
+offClean
+```
+I tried to use pivot_wider for Question 4 in part 2 but it never was able to run when I knitted the document. I have it in the R script that I'll try to include in the Github repo.
